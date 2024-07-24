@@ -1,0 +1,34 @@
+use std::time::Duration;
+use action_watcher::{Config, FileWatcher};
+
+
+fn main() {
+    let config_result = Config::from_yaml("/home/evan/Projects/open_source/action-watcher/examples/example.yaml");
+
+    let config = match config_result {
+        Ok(cfg) => cfg,
+        Err(e) => {
+            eprintln!("Failed to load config: {:?}", e);
+            return;
+        }
+    };
+
+    // let command_runner = CommandRunner::new(commands);
+
+    let file_watcher_result = FileWatcher::from_config(&config);
+
+    let mut file_watcher = match file_watcher_result {
+        Ok(watcher) => watcher,
+        Err(e) => {
+            eprintln!("Failed to create file watcher: {:?}", e);
+            return;
+        }
+    };
+
+    loop {
+        if let Some(event) = file_watcher.wait_for_event(Duration::from_secs(1)) {
+            println!("File event detected: {:?}", event);
+            // file_watcher.run_commands();
+        }
+    }
+}
