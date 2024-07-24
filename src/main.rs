@@ -3,7 +3,7 @@ use action_watcher::{Config, FileWatcher};
 
 
 fn main() {
-    let config_result = Config::from_yaml("/home/evan/Projects/open_source/action-watcher/examples/example.yaml");
+    let config_result = Config::from_yaml("examples/example.yaml");
 
     let config = match config_result {
         Ok(cfg) => cfg,
