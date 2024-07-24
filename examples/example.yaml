@@ -2,9 +2,9 @@ watch_paths:
   - "./src"
 
 commands:
-  - "pytest"
-  - "coverage"
-  - "mypy"
+  - "pytest ."
+  - "bandit -r ./src"
+  - "mypy ./src"
 
 
 report_dir: "./reports"
