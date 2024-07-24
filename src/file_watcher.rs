@@ -1,6 +1,10 @@
-use notify::{RecursiveMode, Result, Watcher, INotifyWatcher};
+use notify::{INotifyWatcher, RecursiveMode, Result, Watcher};
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::channel;
+use std::time::Duration;
+
+use crate::Config;
+
 impl FileWatcher {
     pub fn new<P: AsRef<Path>>(paths: &[P]) -> Result<Self> {
         let (tx, rx) = channel();
@@ -12,7 +16,11 @@ impl FileWatcher {
             watcher.watch(&path_buf, RecursiveMode::Recursive)?;
             watched_paths.push(path_buf);
         }
-        Ok(FileWatcher { watcher, rx , watched_paths })
+        Ok(FileWatcher {
+            watcher,
+            rx,
+            watched_paths,
+        })
     }
 
     pub fn close(&mut self) -> Result<()> {
@@ -24,9 +32,7 @@ impl FileWatcher {
             }
         }
         last_error.map_or(Ok(()), Err)
-
     }
-
 
     pub fn wait_for_event(&self, timeout: Duration) -> Option<notify::Event> {
         self.rx.recv_timeout(timeout).ok().and_then(|res| res.ok())
@@ -36,9 +42,6 @@ impl FileWatcher {
         Self::new(&config.watch_paths)
     }
 }
-use std::time::Duration;
-
-use crate::Config;
 
 pub struct FileWatcher {
     watcher: INotifyWatcher,
@@ -59,9 +62,8 @@ mod tests {
     use super::*;
     use std::fs;
     use std::io::Write;
-    use tempfile::TempDir;
     use std::thread;
-
+    use tempfile::TempDir;
 
     fn wait_for_fs() {
         thread::sleep(Duration::from_millis(100));
@@ -70,7 +72,8 @@ mod tests {
     #[test]
     fn test_file_creation() {
         let temp_dir = TempDir::new().unwrap();
-        let mut watcher = FileWatcher::new(&[temp_dir.path()]).expect("Watcher failed to watch file");
+        let mut watcher =
+            FileWatcher::new(&[temp_dir.path()]).expect("Watcher failed to watch file");
 
         let file_path = temp_dir.path().join("test.txt");
         fs::File::create(&file_path).expect("failed to create file");
@@ -133,7 +136,6 @@ mod tests {
                 notify::EventKind::Remove(notify::event::RemoveKind::File)
             );
             assert_eq!(event.paths[0], file_path);
-
         } else {
             panic!("No event received");
         }

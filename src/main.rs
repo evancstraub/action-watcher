@@ -1,6 +1,5 @@
-use std::time::Duration;
 use action_watcher::{Config, FileWatcher};
-
+use std::time::Duration;
 
 fn main() {
     let config_result = Config::from_yaml("examples/example.yaml");

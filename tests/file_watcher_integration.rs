@@ -1,15 +1,15 @@
-
 use action_watcher::{Config, FileWatcher}; // Assuming these are exposed in your lib.rs
 use std::fs;
 use std::path::Path;
 use std::time::Duration;
 use tempfile::TempDir;
 
-
-
 fn create_test_config(dirs: &[&Path]) -> Config {
     Config {
-        watch_paths: dirs.iter().map(|dir| dir.to_str().unwrap().to_string()).collect(),
+        watch_paths: dirs
+            .iter()
+            .map(|dir| dir.to_str().unwrap().to_string())
+            .collect(),
         commands: vec!["echo 'File changed'".to_string()],
         report_dir: dirs[0].join("reports").to_str().unwrap().to_string(),
     }
