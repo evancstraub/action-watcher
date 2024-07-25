@@ -1,7 +1,6 @@
 // src/command_runner.rs
 
 use crate::Config;
-use std::path::Path;
 use std::process::Command;
 pub struct CommandRunner {
     pub commands: Vec<String>,
@@ -74,6 +73,7 @@ mod tests {
     use super::*;
     use std::fs::File;
     use std::io::Read;
+    use std::path::Path;
     use tempfile::TempDir;
 
     fn create_temp_config(commands: Vec<String>, report_dir: &Path) -> Config {
