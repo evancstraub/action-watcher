@@ -16,7 +16,7 @@ fn main() {
 
     let file_watcher_result = FileWatcher::from_config(&config);
 
-    let mut file_watcher = match file_watcher_result {
+    let file_watcher = match file_watcher_result {
         Ok(watcher) => watcher,
         Err(e) => {
             eprintln!("Failed to create file watcher: {:?}", e);
