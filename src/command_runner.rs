@@ -73,16 +73,7 @@ mod tests {
     use super::*;
     use std::fs::File;
     use std::io::Read;
-    use std::path::Path;
     use tempfile::TempDir;
-
-    fn create_temp_config(commands: Vec<String>, report_dir: &Path) -> Config {
-        Config {
-            watch_paths: vec![],
-            commands,
-            report_dir: "".parse().unwrap(),
-        }
-    }
 
     #[test]
     fn test_run_command_success() {
@@ -104,14 +95,12 @@ mod tests {
 
     #[test]
     fn test_run_command_failure() {
-        let temp_dir = TempDir::new().unwrap();
         let command = "non_existent_command";
 
         let result = CommandRunner::run_command(&command);
 
         assert_ne!(result.status, 0);
         assert!(result.stdout.is_empty());
-        // assert!(result.stderr.contains("command not found") || result.stderr.contains("not recognized"));
     }
 
 }
