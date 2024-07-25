@@ -5,6 +5,12 @@ use std::time::Duration;
 
 use crate::Config;
 
+pub struct FileWatcher {
+    watcher: INotifyWatcher,
+    rx: std::sync::mpsc::Receiver<notify::Result<notify::Event>>,
+    watched_paths: Vec<PathBuf>,
+}
+
 impl FileWatcher {
     pub fn new<P: AsRef<Path>>(paths: &[P]) -> Result<Self> {
         let (tx, rx) = channel();
@@ -41,12 +47,6 @@ impl FileWatcher {
     pub fn from_config(config: &Config) -> Result<Self> {
         Self::new(&config.watch_paths)
     }
-}
-
-pub struct FileWatcher {
-    watcher: INotifyWatcher,
-    rx: std::sync::mpsc::Receiver<notify::Result<notify::Event>>,
-    watched_paths: Vec<PathBuf>,
 }
 
 impl Drop for FileWatcher {

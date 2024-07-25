@@ -1,4 +1,4 @@
-use action_watcher::{Config, FileWatcher};
+use action_watcher::{CommandRunner, Config, FileWatcher};
 use std::time::Duration;
 
 fn main() {
@@ -12,7 +12,7 @@ fn main() {
         }
     };
 
-    // let command_runner = CommandRunner::new(commands);
+    let command_runner = CommandRunner::from_config(&config);
 
     let file_watcher_result = FileWatcher::from_config(&config);
 
@@ -27,6 +27,10 @@ fn main() {
     loop {
         if let Some(event) = file_watcher.wait_for_event(Duration::from_secs(1)) {
             println!("File event detected: {:?}", event);
+            let results = command_runner.run_commands();
+            for result in results {
+                println!("{}", result.stderr);
+            }
             // file_watcher.run_commands();
         }
     }
